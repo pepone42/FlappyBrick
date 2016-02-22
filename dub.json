@@ -1,0 +1,11 @@
+{
+  "name": "flappyd",
+  "description": "FlappyBrid in D",
+  "copyright": "Copyright © 2015, Mathieu PEPONAS",
+  "authors": [
+    "Mathieu PEPONAS"
+  ],
+  "dependencies": {
+    "derelict-sdl2": "~>1.9.7"
+  }
+}
