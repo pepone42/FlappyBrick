@@ -23,8 +23,7 @@ public:
 		auto bmp = new Surface(filename);
 		scope(exit) bmp.dispose();
 		texture_ = SDL_CreateTextureFromSurface(renderer.ptr, bmp.ptr);
-		int w,h;
-		SDL_QueryTexture(texture_, null, null, &w, &h);
+		SDL_QueryTexture(texture_, null, null, &w_, &h_);
 	}
 	int w() {
 		return w_;

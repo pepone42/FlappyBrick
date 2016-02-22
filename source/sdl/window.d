@@ -1,6 +1,7 @@
 module window;
 
 import std.string;
+import std.stdio;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -26,11 +27,25 @@ enum Flags : int {
 class Window {
 private: 
 	SDL_Window *window_;
+	uint tick_;
+	uint timeInterval_=cast(uint)(1000UL / 60);
 public:
 	SDL_Window* ptr() {
 		return window_;
 	}
 	this(string name,int x,int y,int w,int h, Flags f) {
 		window_ = SDL_CreateWindow(toStringz(name),x,y,w,h,f); 
+		tick_=SDL_GetTicks();
+	}
+	void setFrameLimit(int nbFramePerSec) {
+		timeInterval_ = cast(uint)(1000UL / nbFramePerSec);
+	}
+	void frameLimitMe() {
+		tick_ += timeInterval_;
+		//auto todo = SDL_GetTicks();
+		while(SDL_GetTicks()<tick_) {
+			SDL_Delay(1);
+			//writeln(SDL_GetTicks(),",",tick_);
+		}
 	}
 }
