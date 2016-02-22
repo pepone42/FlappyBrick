@@ -3,7 +3,11 @@ import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 import sdl;
 
-class Flappy {
+public interface renderable {
+	void draw(Renderer r);
+}
+
+class Flappy : renderable{
 	enum State {
 		fall,
 		fly,
@@ -17,6 +21,42 @@ class Flappy {
 	this(const float x) {
 		this.x=x;
 	}
+
+	override void draw(Renderer renderer) {
+	}
+}
+
+class Background : renderable {
+private:
+	int xSpeed_;
+	int y_;
+	int w_;
+	int h_;
+	Texture texture_;
+	SDL_Rect src;
+	SDL_Rect dest;
+public:
+	this(int xSpeed, int y, Texture texture=null) {
+		xSpeed_= xSpeed;
+		x_ = y;
+		if (texture) {
+			this.texture=texture;
+		}
+		src.x = 0;
+		src.y = 0;
+	}
+	void texture(Texture texture) {
+		texture_ = texture;
+		w_ = texture.w;
+		h_ = texture.h;
+	}
+	override void draw(Renderer renderer) {
+		renderer.copy(texture_);
+	}
+}
+
+void draw(T)(Renderer r,T object) if (is(T : renderable)) {
+	object.draw(r);
 }
 
 void main() {
@@ -26,33 +66,29 @@ void main() {
 
 	auto win = new Window("Flappy in D!", 100, 100, 180*scale, 320*scale, window.Flags.SHOWN|window.Flags.RESIZABLE);
 	auto ren = new Renderer(win, renderer.Flags.ACCELERATED | renderer.Flags.PRESENTVSYNC);
-	auto back = new Texture(ren,"./assets/background.bmp");
+	auto back_texture = new Texture(ren,"./assets/background.bmp");
+	auto back = new Background(0,0,back_texture);
 
 	auto flappy = new Flappy(20);
 	auto quit = false;
 
 	SDL_Event e;
 
-	writeln(back);
-
-
 	// main loop
 	while(!quit) {
 		while (SDL_PollEvent(&e)) {
 				switch (e.type) {
-				//If user closes he window
+				//If user closes the window
 				case SDL_QUIT:
 				quit = true;break;
 				default: break;
 
 			}
 		}	
-		//SDL_RenderClear(ren.ren);
-		//SDL_RenderCopy(ren.ren, back.tex, null, null);
+
 		ren.clear();
-		ren.copy(back);
+		ren.draw(back);
 		ren.present();
-		//SDL_RenderPresent(ren.sdl_renderer);
 	}
 
 	writeln("");

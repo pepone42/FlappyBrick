@@ -17,7 +17,7 @@ public:
 	this(string filename) {
 		surface_ = IMG_Load(toStringz(filename));
 		if (surface_==null) {
-			throw new Exception(get_error("Couldn't load " ~ filename));
+			throw new SDLError();
 		}
 	}
 	void dispose() {

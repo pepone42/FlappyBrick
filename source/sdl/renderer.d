@@ -3,11 +3,13 @@ module renderer;
 import std.format;
 import std.string;
 
-import window;
-import texture;
-
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
+
+import window;
+import texture;
+import error;
+
 
 enum Flags : int {
 	SOFTWARE = SDL_RENDERER_SOFTWARE,
@@ -28,19 +30,13 @@ public:
 	}
 	void clear() {
 		auto r=SDL_RenderClear(renderer_);
-		if (r!=0) {
-			auto msg = format("Error %s",fromStringz(SDL_GetError()));
-			throw new Exception(msg);
-		}
+		if (r!=0)
+			throw new Error(get_error(__PRETTY_FUNCTION__~" Error:\n"));
 	}
 	void copy(Texture texture,SDL_Rect *src=null,SDL_Rect *dst=null) {
-		// TODO : add sourceRect and DestRect support
-		//SDL_RenderCopy(ren.ren, back.tex, null, null);
 		auto r = SDL_RenderCopy(renderer_, texture.ptr, src, dst);
-		if (r!=0) {
-			auto msg = format("Error %s",fromStringz(SDL_GetError()));
-			throw new Exception(msg);
-		}
+		if (r!=0)
+			throw new Exception(get_error(__PRETTY_FUNCTION__~":\n"));
 	}
 	void present() {
 		SDL_RenderPresent(renderer_);	

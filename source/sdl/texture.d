@@ -8,10 +8,13 @@ import derelict.sdl2.image;
 
 import renderer;
 import surface;
+import error;
 
 class Texture {
 private:
 	SDL_Texture* texture_;
+	int w_;
+	int h_;
 public:
 	SDL_Texture* ptr() {
 		return texture_;
@@ -19,10 +22,14 @@ public:
 	this(Renderer renderer,string filename) {
 		auto bmp = new Surface(filename);
 		scope(exit) bmp.dispose();
-		if (bmp is null) {
-			auto msg = format("Error While trying to load %s :\n%s\n",filename,fromStringz(SDL_GetError()));
-			throw new Exception(msg);
-		}
 		texture_ = SDL_CreateTextureFromSurface(renderer.ptr, bmp.ptr);
+		int w,h;
+		SDL_QueryTexture(texture_, null, null, &w, &h);
+	}
+	int w() {
+		return w_;
+	}
+	int h() {
+		return h_;
 	}
 }
